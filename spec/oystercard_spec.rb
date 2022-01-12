@@ -20,9 +20,13 @@ describe Oystercard do
 
     end
 
-    it 'deducts an amount from the balance' do
-        subject.top_up(20)
-        expect{ subject.deduct 3}.to change{ subject.balance }.by -3
+    describe '#touch_in' do
+
+        it "changes @in_journey to true when touched in" do
+          expect { subject.touch_in }.to change { subject.in_journey }.from(false).to(true)
+        end
     end
+    
+
 
 end
