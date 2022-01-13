@@ -32,5 +32,11 @@ describe Oystercard do
         subject.touch_in
         expect { subject.touch_out }.to change { subject.in_journey }.from(true).to(false)
     end
+    
+    it 'takes a charge when touching in' do
+      subject.top_up(5)
+      subject.touch_in
+      expect{ subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MINIMUM_CHARGE)
+    end
 
 end
