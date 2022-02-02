@@ -33,3 +33,8 @@ In order to pay for my journey
 As a customer
 I need to pay for my journey when it's complete
 ```
+```
+In order to pay for my journey
+As a customer
+I need to know where I've travelled from
+```
