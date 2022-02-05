@@ -1,40 +1,45 @@
 require 'oystercard'
 
 describe Oystercard do 
-    let(:station){ double :station }
+    let(:station){double (:station)}
+    
 
     it 'has a balance of 0' do
         expect(subject.balance).to eq(0)
     end
-
-    it 'can top up the balance' do
+    
+    describe '#top_up' do
+      it 'can top up the balance' do
         expect{ subject.top_up 20 }.to change{ subject.balance }.by 20
-    end
+      end
 
-    it 'raises an error if the maximum balance is exceeded' do
+      it 'raises an error if the maximum balance is exceeded' do
         maximum_balance = Oystercard::MAXIMUM_BALANCE
         subject.top_up(maximum_balance)
         expect{ subject.top_up 1 }.to raise_error 'Maximum balance of #{maximum_balance} exceeded'
-    end
-
-    it "changes @in_journey? to true when touched in" do
-        subject.top_up(5)
-        expect { subject.touch_in(station) }.to change { subject.in_journey? }.from(false).to(true)
-    end
-
-  
-
-    it 'will not touch in if below minimum balance' do
-        expect{ subject.touch_in(station) }.to raise_error "Insufficient balance to touch in"
+      end
     end
     
-    it "changes @in_journey? to false when touched out" do
+    describe '#touch_in' do
+      it "changes @in_journey? to true when touched in" do
+        subject.top_up(5)
+        expect { subject.touch_in(station) }.to change { subject.in_journey? }.from(false).to(true)
+      end
+
+     it 'will not touch in if below minimum balance' do
+        expect{ subject.touch_in(station) }.to raise_error "Insufficient balance to touch in"
+      end
+    end
+    
+    describe '#touch_out' do
+      it "changes @in_journey? to false when touched out" do
         subject.top_up(5)
         subject.touch_in(station)
         expect { subject.touch_out }.to change { subject.in_journey? }.from(true).to(false)
+      end
     end
     
-    it 'takes a charge when touching in' do
+    it 'takes a charge when touching out' do
       subject.top_up(5)
       subject.touch_in(station)
       expect{ subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MINIMUM_CHARGE)
@@ -46,4 +51,9 @@ describe Oystercard do
         expect(subject.entry_station).to eq station
     end
 
+    it 'forgets the station on touch out' do
+      subject.touch_out
+      expect(subject.entry_station).to be_nil
+    end
+    
 end
