@@ -1,7 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do 
-    let(:station){double (:station)}
+    let(:station) {double :station}
     
 
     it 'has a balance of 0' do
@@ -35,25 +35,24 @@ describe Oystercard do
       it "changes @in_journey? to false when touched out" do
         subject.top_up(5)
         subject.touch_in(station)
-        expect { subject.touch_out }.to change { subject.in_journey? }.from(true).to(false)
+        expect { subject.touch_out(station) }.to change { subject.in_journey? }.from(true).to(false)
+      end
+    
+    
+      it 'takes a charge when touching out' do
+        expect{ subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::MINIMUM_CHARGE)
+      end
+    
+      it 'stores the station' do
+        subject.top_up(5)
+        subject.touch_out(station)
+        expect(subject.exit_station).to eq (station)
       end
     end
+
     
-    it 'takes a charge when touching out' do
-      subject.top_up(5)
-      subject.touch_in(station)
-      expect{ subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MINIMUM_CHARGE)
-    end
-    
-    it 'stores the entry station' do
-        subject.top_up(5)
-        subject.touch_in(station)
-        expect(subject.entry_station).to eq station
+    it 'has a empty list of journeys by default' do
+        expect(subject.journeys).to be_empty
     end
 
-    it 'forgets the station on touch out' do
-      subject.touch_out
-      expect(subject.entry_station).to be_nil
-    end
-    
 end
